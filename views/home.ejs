@@ -1,0 +1,53 @@
+<!--   Tag	|     Meaning	      |      Use
+   <% %>	|  JS logic	          |  loops, if, variables
+   <%= %>	|  Output (escaped)	  |  print values
+   <%- %>	|  Output (raw HTML)  |  print HTML
+this is 80% ejs-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body{
+            font-family: "Times New Roman";
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>URL SHORTENER</h1>
+    <%  if (locals.shortId) { %>
+     <p>URL Generated: http://localhost:8001/users/<%=shortId%></p>
+     <%}%>
+    <form method="post" action="/users">
+        <label>Enter your URL</label><br>
+        <input type="text" name="Url" placeholder="http://example.com/something?....">  
+        <button>Generate</button>
+    </form>
+    <br>
+    <br>
+    <div>
+    <%if(locals.urls){%>
+        <capption>Data:</capption>
+    <table>
+        <tr>
+            <th>S.No</th>
+            <th>Original URL</th>
+            <th>shortId</th>
+            <th>totalClicks</th>
+        </tr>
+        <%urls.forEach((url,i)=>{%>
+            <tr>
+                <td><%=i+1%></td>
+                <td><%=url.originalUrl%></td>
+                <td><%=url.shortId%></td>
+                <td><%=url.viewHistory.length%></td>
+            </tr>
+        <%})%>
+    </table>
+    <%}%>
+    </div>
+</body>
+</html>
