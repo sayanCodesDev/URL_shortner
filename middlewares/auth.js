@@ -1,36 +1,27 @@
 const {getUser}=require("../service/auth");
 
-function restrictToLoggedinUSerOnly(req,res,next){
+function checkedForAuthentication(req,res,next){
     // const userUid=req.cookies?.uid;
-    const authHeader=req.headers["authorization"];
-    
-    if(!authHeader) return res.redirect("/user/login");
-    
-    const token=authHeader.split(" ")[1]; // Bearer tokenstring
+    const tokenCookie=req.cookies?.token // for stateless auth we can use header and for statefull auth we can use cookie
+    if(!tokenCookie) return res.redirect("/user/login");
+
+    const token=tokenCookie; 
     const user=getUser(token);
     if(!user) return res.redirect("/user/login");
-
+    
     req.user=user;
-    next();
+    return next();
 }
 
-function checkAuth(req,res,next){
-    // const userUid=req.cookies?.uid;
-    const authHeader=req.headers["authorization"];
-    
-    
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-        const token = authHeader.split(" ")[1];
-        req.user = getUser(token);
-    } else {
-        req.user = null;
+function restrictTo(roles=[]){
+    return function(req,res,next){
+        if(!req.user) return res.redirect("/user/login");
+        if(!roles.includes(req.user.role)) return res.status(403).send( {error:"Access Denied"});
+        return next();
     }
-
-    
-    next();
 }
 
 module.exports={
-    restrictToLoggedinUSerOnly,
-    checkAuth,
+    checkedForAuthentication,
+    restrictTo,
 }

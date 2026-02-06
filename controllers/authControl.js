@@ -24,7 +24,7 @@ async function handleUserLogin(req,res){
     const {email, password}=req.body;
 
     const user= await userAuth.findOne({email,password});
-    if(!user){
+    if(!user){ 
         return res.render("login",{
             error:"Invalid info",
         });
@@ -34,8 +34,8 @@ async function handleUserLogin(req,res){
     // res.cookie("uid",sessionId);
     
     const token=setUser(user)  //this is stateless auth
-    // res.cookie("uid",token);        //we can set the domain and expiry also
-    return res.json({token})
+    res.cookie("token",token);        //we can set the domain and expiry also
+    return res.redirect("/");
     
 }
 

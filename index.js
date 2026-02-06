@@ -8,8 +8,8 @@ const userRouter=require("./routes/route");
 const staticRoute=require("./routes/staticRouter");
 
 const {
-    restrictToLoggedinUSerOnly,
-    checkAuth,
+    checkedForAuthentication,
+    restrictTo,
 }=require("./middlewares/auth")
 
 const PORT =8001;
@@ -27,11 +27,14 @@ connectToMongodb("mongodb://127.0.0.1:27017/shortUrl")
     .then(()=> console.log("MongoDb Connected")
 );
 
-app.use("/",checkAuth, staticRoute);
-
 //Routes
-app.use("/users", restrictToLoggedinUSerOnly,userRouter);
 app.use("/user", userAuthRouter);
+
+app.use(checkedForAuthentication);
+
+app.use("/", restrictTo(["NORMAL","ADMIN"]), staticRoute);
+app.use("/users",userRouter);
+
 
 
 app.listen(PORT, ()=>console.log("Server Started!!"));
