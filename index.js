@@ -32,7 +32,7 @@ app.use("/user", userAuthRouter);
 
 app.use(checkedForAuthentication);
 
-app.use("/", restrictTo(["NORMAL","ADMIN"]), staticRoute);
+app.use("/", restrictTo(["NORMAL","ADMIN","admin","Admin"]), staticRoute);
 app.use("/users",userRouter);
 
 

@@ -3,7 +3,7 @@ const userAuth=require("../models/userAuth");
 const{getUser,setUser}=require("../service/auth");
 
 async function handleUserSignup(req,res){
-    const {name, email, password}=req.body;
+    const {name, email, password,role}=req.body;
 
     const existingUser= await userAuth.findOne({email});
     if(existingUser){
@@ -16,6 +16,7 @@ async function handleUserSignup(req,res){
         name,
         email,
         password,
+        role,
     });
     res.redirect("/user/login");
 }
