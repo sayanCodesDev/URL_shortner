@@ -15,39 +15,188 @@ this is 80% ejs-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        /* 1. Global Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 2. Heading */
+h1 {
+    margin: 20px 0;
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+/* 3. Success Message Alert */
+.success-msg {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #c3e6cb;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 800px;
+    word-break: break-all; /* Ensures long URLs don't break layout */
+    text-align: center;
+}
+
+/* 4. Form Styling */
+form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+input[type="text"] {
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* 5. Responsive Table */
+.table-container {
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 40px;
+    overflow-x: auto; /* Crucial for mobile responsiveness */
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+caption {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 15px;
+    text-align: left;
+    color: #2c3e50;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Prevents columns from getting too squished */
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #fcfcfc;
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Column specific widths */
+td:nth-child(2) {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Shortens long original URLs with ... */
+}
+    </style>
 </head>
 <body>
-    <h1>URL SHORTENER</h1>
-    <%  if (locals.shortId) { %>
-     <p>URL Generated: http://localhost:8001/users/<%=shortId%></p>
-     <%}%>
+    <h1>URL Shortener</h1>
+
+    <% if (locals.shortId) { %>
+        <div class="success-msg">
+            <strong>URL Generated:</strong> 
+            <a href="http://localhost:8001/users/<%=shortId%>" target="_blank">
+                http://localhost:8001/users/<%=shortId%>
+            </a>
+        </div>
+    <% } %>
+
     <form method="post" action="/users">
-        <label>Enter your URL</label><br>
-        <input type="text" name="Url" placeholder="http://example.com/something?....">  
-        <button>Generate</button>
+        <label>Enter your URL</label>
+        <input type="text" name="Url" placeholder="http://example.com/something?...." required>  
+        <button type="submit">Generate</button>
     </form>
-    <br>
-    <br>
-    <div>
-    <%if(locals.urls){%>
-        <capption>Data:</capption>
-    <table>
-        <tr>
-            <th>S.No</th>
-            <th>Original URL</th>
-            <th>shortId</th>
-            <th>totalClicks</th>
-        </tr>
-        <%urls.forEach((url,i)=>{%>
-            <tr>
-                <td><%=i+1%></td>
-                <td><%=url.originalUrl%></td>
-                <td><%=url.shortId%></td>
-                <td><%=url.viewHistory.length%></td>
-            </tr>
-        <%})%>
-    </table>
-    <%}%>
+
+    <div class="table-container">
+        <% if(locals.urls) { %>
+            <table>
+                <caption>Recent URLs</caption>
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Original URL</th>
+                        <th>Short ID</th>
+                        <th>Total Clicks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% urls.forEach((url, i) => { %>
+                        <tr>
+                            <td><%= i + 1 %></td>
+                            <td title="<%= url.originalUrl %>"><%= url.originalUrl %></td>
+                            <td><code><%= url.shortId %></code></td>
+                            <td><strong><%= url.viewHistory.length %></strong></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
     </div>
 </body>
 </html>
